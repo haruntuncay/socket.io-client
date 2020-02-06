@@ -1,0 +1,4 @@
+/.idea
+socket.io-client.iml
+/src/test/resources/node_modules/
+git

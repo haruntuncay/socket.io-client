@@ -1,0 +1,14 @@
+{
+  "name": "mod",
+  "version": "1.0.0",
+  "description": "",
+  "main": "testserver.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "socket.io": "2.3.0"
+  },
+  "author": "",
+  "license": "ISC"
+}
