@@ -17,13 +17,20 @@ import static common.Worker.*;
  * Manages a group of Sockets and maintains an EngineSocket to delegate reads and writes.
  * Exposes multiple events in order to keep sockets notified. Namely:
  * <p> {@link #OPEN}, emitted when the underlying EngineSocket instance is considered open.
+ * <p> {@link #ERROR}, emitted when an unforeseen circumstance happens.
+ * It can be anything from an exception to irrecoverable connection error.
  * <p> {@link #CLOSE}, emitted when the underlying EngineSocket instance is closed orderly, either by the client or by the server.
  * <p> {@link #ABRUPT_CLOSE}, emitted when the connection is closed due to an error or an unexpected event.
  * <p> {@link #PING}, emitted when the ping packet is written.
  * <p> {@link #PONG}, emitted when the pong packet is received.
  * <p> {@link #PACKET}, emitted when a socket.io packet is receives and decoded.
- * <p> {@link #RECONNECT_FAIL}, emitted when the reconnect attempts reaches its max value.
- * <p> {@link #RECONNECT_ATTEMPT}, emitted when an attempt to reconnect is made.
+ * <p> {@link #RECONNECT_ATTEMPT} emitted when a reconnect attempt is made.
+ * Reconnect attempts will only be made if the connection is closed abruptly.
+ * This means, when you or the server closes the connection willingly, no reconnect attempt will be made.
+ * <p> {@link #RECONNECT_FAIL} emitted when maximum number of reconnect attempts is made and reconnection still failed.
+ * <p> {@link #UPGRADE} emitted when an upgradable transport successfully moves to websocket transport from polling transport.
+ * <p> {@link #UPGRADE_ATTEMPT} emitted when an upgrade attempt is about to be made.
+ * <p> {@link #UPGRADE_FAIL} emitted when the upgrade attempt is failed.
  */
 public class Manager extends Observable {
 
@@ -206,12 +213,11 @@ public class Manager extends Observable {
     public static final String PING = EngineSocket.PING;
     public static final String PONG = EngineSocket.PONG;
     public static final String PACKET = "packet";
+    public static final String RECONNECT_ATTEMPT = "reconnect_attempt";
+    public static final String RECONNECT_FAIL = "reconnect_failed";
     public static final String UPGRADE = EngineSocket.UPGRADE;
     public static final String UPGRADE_ATTEMPT = EngineSocket.UPGRADE_ATTEMPT;
     public static final String UPGRADE_FAIL = EngineSocket.UPGRADE_FAIL;
-    public static final String RECONNECT_FAIL = "reconnect_failed";
-    public static final String RECONNECT_ATTEMPT = "reconnect_attempt";
-
 
     private static class ReconnectManager {
 

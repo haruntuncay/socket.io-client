@@ -31,7 +31,7 @@ socket.open();
 // Emit "eventName" to server event with "hello" as data.
 socket.emit("eventName", "hello");
 ```
-Check out the [wiki](https://github.com/haruntuncay/socket.io-client/wiki/Basics) for a detailed explanation on usage and api of this library.
+Check out the [wiki](https://github.com/haruntuncay/socket.io-client/wiki) for a detailed explanation on usage and api of this library.
 
 ## License
 MIT license.

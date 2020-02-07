@@ -16,14 +16,25 @@ import static common.Utils.jsonArrayToObjectArray;
  * Provides several events that clients can register for. Namely:
  * <p> {@link #CONNECT} emitted when the socket is considered connected.
  *      For a socket to be considered connected, a CONNECT packet has to be received.
- * <p> {@link #ERROR} emitted when an error packet is received.
- * <p> {@link #DISCONNECT} emitted when the socket instance is disconnected.
- *      Disconnection can be initiated by either the client or the server.
+ * <p> {@link #ERROR} emitted when an unforeseen circumstance happens.
+ * It can be anything from an exception to irrecoverable connection error.
+ * If any, information about the error will be shared with the client as the parameter of callback.
+ * <p> {@link #ERROR_PACKET} emitted when the server sends an error packet.
+ * This is different and **Socket.ERROR** as this one just indicates that a socket.io packet with **ERROR** as the type is received.
+ * <p> {@link #DISCONNECT} emitted when the socket instance is closed/disconnected.
+ * This event designated a successful disconnection rather than an erroneous closing or loss of connection.
+ * The connection can be closed/disconnected either by the client by calling {@link #close()} on the instance or by the server.
  * <p> {@link #PING} emitted when a PING packet is written.
  * <p> {@link #PONG} emitted when a PONG packet is received.
  * <p> {@link #ABRUPT_CLOSE} emitted when the connection is closed due to an error.
  * <p> {@link #CLOSE} emitted when the the underlying manager is closed.
  * <p> {@link #RECONNECT_ATTEMPT} emitted when a reconnect attempt is made.
+ * Reconnect attempts will only be made if the connection is closed abruptly.
+ * This means, when you or the server closes the connection willingly, no reconnect attempt will be made.
+ * <p> {@link #RECONNECT_FAIL} emitted when maximum number of reconnect attempts is made and reconnection still failed.
+ * <p> {@link #UPGRADE} emitted when an upgradable transport successfully moves to websocket transport from polling transport.
+ * <p> {@link #UPGRADE_ATTEMPT} emitted when an upgrade attempt is about to be made.
+ * <p> {@link #UPGRADE_FAIL} emitted when the upgrade attempt is failed.
  */
 public class Socket extends Observable {
 

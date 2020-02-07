@@ -40,6 +40,9 @@ import static common.Worker.*;
  * <p> {@link #PONG}, emitted when the PONG packet is received.
  * <p> {@link #CLOSE}, emitted when an orderly close operation is complete, that is initiated either by the client or by the server.
  * <p> {@link #ERROR}, emitted in case of an unrecoverable error or when Socket.IO server refuses the client. (http status code 403)
+ * <p> {@link #UPGRADE} emitted when an upgradable transport successfully moves to websocket transport from polling transport.
+ * <p> {@link #UPGRADE_ATTEMPT} emitted when an upgrade attempt is about to be made.
+ * <p> {@link #UPGRADE_FAIL} emitted when the upgrade attempt is failed.
  */
 public class EngineSocket extends Observable {
 
