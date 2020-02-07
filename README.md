@@ -13,6 +13,24 @@ You can install this library using the following:
 ```
 
 ## Usage and API
+This library uses `socketio_client.Socket` instances to expose its client api.
+You can get an instance of one through `socketio_client.IO` builder class.
+A basic example:
+```
+// Create and configure the socket instance.
+Socket socket = IO.of("http://localhost:3000/")
+                  .socket();
+
+// Register for available callbacks.
+socket.on(Socket.CONNECT, argv -> {...});
+socket.on("eventName", argv -> {...});
+
+// Open the connection.
+socket.open();
+
+// Emit "eventName" to server event with "hello" as data.
+socket.emit("eventName", "hello");
+```
 Check out the [wiki](https://github.com/haruntuncay/socket.io-client/wiki/Basics) for a detailed explanation on usage and api of this library.
 
 ## License
