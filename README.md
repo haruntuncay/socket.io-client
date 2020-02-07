@@ -13,7 +13,7 @@ You can install this library using the following:
 ```
 
 ## Usage and API
-Check out the [wiki](https://github.com/haruntuncay/socket.io-client/wiki) for a detailed explanation on usage and api of this library.
+Check out the [wiki](https://github.com/haruntuncay/socket.io-client/wiki/Basics) for a detailed explanation on usage and api of this library.
 
 ## License
 MIT license.

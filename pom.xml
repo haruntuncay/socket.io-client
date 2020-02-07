@@ -10,7 +10,7 @@
 
     <properties>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.comiler.source>1.8</maven.comiler.source>
+        <maven.compiler.source>1.8</maven.compiler.source>
     </properties>
 
     <dependencies>
