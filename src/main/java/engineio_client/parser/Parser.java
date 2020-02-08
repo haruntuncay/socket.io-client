@@ -33,8 +33,8 @@ import java.util.Arrays;
  *      since WebSocketTransport doesn't require payloads or buffering, only a single packet needs to be encoded/decoded at a given time.
  * <p> The format is: TypeValue + data.
  * <p> Of course, if the data is String, this value is written as String, if the packet is binary, this value is written as byte[].
- * <p> For example: Packet of type MESSAGE(4) with data "Hello" would be encoded as -> 4Hello.
- * <br> And Packet of type MESSAGE(4) with data [1,2,3] would be encoded as -> 0x4 0x1 0x2 0x3.
+ * <p> For example: Packet of type MESSAGE(4) with data "Hello" would be encoded as, 4Hello.
+ * <br> And Packet of type MESSAGE(4) with data [1,2,3] would be encoded as, 0x4 0x1 0x2 0x3.
  *
  * @see <a href="https://github.com/socketio/engine.io-protocol">EngineIO protocol</a> for detailed information.
  */

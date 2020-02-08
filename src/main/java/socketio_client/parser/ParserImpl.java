@@ -23,7 +23,7 @@ import static java.lang.Character.isDigit;
  * <br> Value of packet's type
  * <br> + (if any) number of binary attachments (number of byte[]s in data) + ATTACHMENT_SEPARATOR("-")
  * <br> + (if namespace isn't "/") NAMESPACE + NAMESPACE_END(",")
- * <br> + (if id > -1) packet's id
+ * <br> + (if id &gt; -1) packet's id
  * <br> + (if not null) packet's json encoded data.
  * If the packet's type is {@link socketio_client.parser.Type#EVENT}, data will be encoded to json array,
  *      which will have event's name as the first argument.

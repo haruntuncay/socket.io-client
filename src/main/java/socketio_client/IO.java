@@ -18,8 +18,8 @@ import static common.Utils.getConnectionPath;
  * <p> {@link IO#of(String)} a static factory method that must be called to get an IO instance.
  * <br> Example: {@code IO.of("http://localhost:3000");}
  * <p> {@link #noMultiplex} disable multiplexing. (creates a new connection for each socket)
- * <p> {@link #query(String, String)} add a query key->value pair.
- * <p> {@link #header(String, String)} add a header key->value pair.
+ * <p> {@link #query(String, String)} add a query key-value pair.
+ * <p> {@link #header(String, String)} add a header key-value pair.
  * <p> {@link #path(String)} sets the path of the connection.
  * <p> {@link #socket} creates and returns the configured socket instance.
  *
@@ -30,7 +30,7 @@ import static common.Utils.getConnectionPath;
  *      but rather connects to the "http://localhost/socket.io" and uses "/chat" as the <b>namespace</b>.
  *      Therefore, if you want to connect to a different path than "/socket.io", use {@link #path(String)} to describe it.
  *
- * {@see <a href="https://socket.io/docs/#Restricting-yourself-to-a-namespace"}>Namespace</a> documentation at socket.io website for details about namespaces.
+ * @see <a href="https://socket.io/docs/#Restricting-yourself-to-a-namespace">Namespace</a> documentation at socket.io website for details about namespaces.
  */
 public class IO {
 
@@ -115,6 +115,7 @@ public class IO {
      *
      * @see <a href="https://square.github.io/okhttp/https/">Okhttp HTTPS</a> for an explanation of how to provide a secure Call.Factory.
      *
+     * @param callFactory
      * @return IO (This) instance for method chaining.
      */
     public IO callFactory(Call.Factory callFactory) {
@@ -132,6 +133,7 @@ public class IO {
      *
      * @see <a href="https://square.github.io/okhttp/https/">Okhttp HTTPS</a> for an explanation of how to provide a secure WebSocket.Factory.
      *
+     * @param webSocketFactory
      * @return IO (This) instance for method chaining.
      */
     public IO webSocketFactory(WebSocket.Factory webSocketFactory) {
@@ -167,6 +169,8 @@ public class IO {
     /**
      * The path given in the URI is actually interpreted as the namespace.
      * So, in order to change the path("/socket.io" by default), call this method with the desired path.
+     *
+     * @return (This) instance for method chaining.
      */
     public IO path(String path) {
         // Make sure path conforms to the form "/path_name/".

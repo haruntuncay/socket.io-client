@@ -38,6 +38,8 @@ public class Worker {
 
     /**
      * Submit a {@link Runnable} to be executed by a single threaded {@code ExecutorService}.
+     *
+     * @param runnable
      */
     public static void execute(Runnable runnable) {
         initExecutor();
@@ -97,6 +99,8 @@ public class Worker {
      *  <p>
      *  <b>Note:</b> Call this method only when you are completely done with the Socket.IO Client API as a way to clean up
      *               any worker threads that might keep the JVM from shutting down.
+     *
+     * @param timeOutInMillis Timeout in milliseconds.
      */
     public static void shutdown(int timeOutInMillis) {
         // todo, maybe figure out a better way to close ?

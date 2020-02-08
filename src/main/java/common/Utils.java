@@ -19,7 +19,7 @@ public class Utils {
     /**
      * Given a {@code Map<String, String>} builds a query string from its entries.
      *
-     * @param queryMap The {@code Map<String, String>} instance that contains key->value pairs.
+     * @param queryMap The {@code Map<String, String>} instance that contains key-value pairs.
      * @return The query string that will be appended to the URL when {@link Transport#open} is called.
      */
     public static String getQueryStringFromMap(Map<String, String> queryMap) {
@@ -50,6 +50,10 @@ public class Utils {
      *  By default, path portion of the given URI is treated as the namespace, and actual path becomes "/engine.io".
      *  For example, "https://abc.com/admin" actually connects to "https://abc.com/engine.io" with "/admin" as the namespace.
      *  Given a URI and an explicit path, get a connection path.
+     *
+     * @param url Url to get components from.
+     * @param path Path to concatenate.
+     * @return connection url concatenated with path.
      */
     public static String getConnectionPath(URL url, String path) {
         return url.getHost()

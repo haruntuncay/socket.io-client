@@ -123,6 +123,10 @@ public class Observable {
         }
         /**
          * @see Observable#on(String, Callback)
+         *
+         * @param event
+         * @param callback
+         * @return CallbackHandle
          */
         public CallbackHandle on(String event, Callback callback) {
             return Observable.this.on(event, callback);
@@ -130,6 +134,10 @@ public class Observable {
 
         /**
          * @see Observable#once(String, Callback)
+         *
+         * @param event
+         * @param callback
+         * @return CallbackHandle
          */
         public CallbackHandle once(String event, Callback callback) {
             return Observable.this.on(event, callback);
