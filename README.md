@@ -35,3 +35,8 @@ Check out the [wiki](https://github.com/haruntuncay/socket.io-client/wiki) for a
 
 ## License
 MIT license.
+
+
+## Contributing
+Contributions are appreciated, but before submitting any contributions, please open an issue first.
+You can checkout [inner details](https://github.com/haruntuncay/socket.io-client/wiki/Inner-Details) wiki page for implementation information.
