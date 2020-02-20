@@ -7,6 +7,8 @@ import engineio_client.transports.PollingTransport;
 import engineio_client.transports.WebSocketTransport;
 import engineio_client.transports.Transport;
 import exceptions.EngineIOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.*;
@@ -45,6 +47,8 @@ import static common.Worker.*;
  * <p> {@link #UPGRADE_FAIL} emitted when the upgrade attempt is failed.
  */
 public class EngineSocket extends Observable {
+
+    private final Logger logger = LoggerFactory.getLogger(EngineSocket.class);
 
     private Config config;
     private String sessionId;
@@ -105,15 +109,19 @@ public class EngineSocket extends Observable {
      * Takes the order into consideration.
      */
     private void createTransport() {
-        if(config.transports == null || config.transports.length == 0)
-            throw new EngineIOException("{Config.transports} can't be null or empty");
+        if(config.transports == null || config.transports.length == 0) {
+            logger.error("config.transports was null or empty, {}", (Object) config.transports);
+            throw new EngineIOException("config.transports can't be null or empty");
+        }
 
         if(PollingTransport.NAME.equals(config.transports[0]))
             transport = new PollingTransport(config);
         else if(WebSocketTransport.NAME.equals(config.transports[0]))
             transport = new WebSocketTransport(config);
-        else
+        else {
+            logger.error("Unknown transport {} was chosen.", transport);
             throw new EngineIOException("Unknown transport '" + config.transports[0] + "'.Choose either 'polling' or 'websocket'.");
+        }
     }
 
     private void registerForTransportEvents() {

@@ -5,6 +5,9 @@ import exceptions.SocketIOParserException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -113,6 +116,8 @@ public class ParserImpl implements Parser {
 
     public static class DecoderImpl implements Parser.Decoder {
 
+        private final Logger logger = LoggerFactory.getLogger(DecoderImpl.class);
+
         private Packet pendingPacket;
         private int attachmentsLeftToWait;
 
@@ -136,8 +141,11 @@ public class ParserImpl implements Parser {
             //      {_placeholder: true, num: _} objects with arriving byte arrays(byte[]).
             // There can be at most 1 pending packet at any given time.
             // If we receive a binary packet (with attachments) while there is already a pending one, something must be wrong with server.
-            if(pendingPacket != null)
-                throw new SocketIOException("Received a binary packet while another one is already waiting for re-construction.");
+            if(pendingPacket != null) {
+                SocketIOParserException e = new SocketIOParserException("Received a binary packet while another one is already waiting for re-construction.");
+                logException(e);
+                throw e;
+            }
 
             pendingPacket = packet;
             attachmentsLeftToWait = packet.attachmentSize;
@@ -146,12 +154,18 @@ public class ParserImpl implements Parser {
         public void add(byte[] bytes, DecodeCallback callback) {
             // Received a pure byte array(byte[]).
             // This means there must be a reconstruction pending binary packet.
-            if(pendingPacket == null || attachmentsLeftToWait == 0)
-                throw new SocketIOException("Received a byte[] when there was no re-construction pending packet.");
+            if(pendingPacket == null || attachmentsLeftToWait == 0) {
+                SocketIOParserException e = new SocketIOParserException("Received a byte[] when there was no re-construction pending packet.");
+                logException(e);
+                throw e;
+            }
 
             boolean isPlaceFound = substitutePlaceholderWithByteArray(pendingPacket.data, bytes, false);
-            if(!isPlaceFound)
-                throw new SocketIOParserException("No placeholder object found for this byte[].");
+            if(!isPlaceFound) {
+                SocketIOParserException e = new SocketIOParserException("No placeholder object found for this byte[].");
+                logException(e);
+                throw e;
+            }
 
             // We are done with attachments. Notify the caller and clear pending packet.
             --attachmentsLeftToWait;
@@ -163,8 +177,11 @@ public class ParserImpl implements Parser {
 
         private Packet decodeStringData(String encodedStr) {
             int typeValue = Character.digit(encodedStr.charAt(0), 10);
-            if(!Type.isValid(typeValue))
-                throw new SocketIOParserException("Type (" + typeValue + ") is not a valid Socket.IO packet type.");
+            if(!Type.isValid(typeValue)) {
+                SocketIOParserException e = new SocketIOParserException("Type (" + typeValue + ") is not a valid Socket.IO packet type.");
+                logException(e);
+                throw e;
+            }
 
             Type type = Type.getTypeForValue(typeValue);
             Packet packet = new Packet(type);
@@ -180,8 +197,11 @@ public class ParserImpl implements Parser {
             int indexOfNamespaceStart = encodedStr.indexOf(NAMESPACE_START, nextReadIndex);
             if(indexOfNamespaceStart > -1) {
                 int indexOfNamespaceEnd = encodedStr.indexOf(NAMESPACE_END, indexOfNamespaceStart);
-                if(indexOfNamespaceEnd == -1)
-                    throw new SocketIOParserException("Namespace end symbol (" + NAMESPACE_END + ") is not found.");
+                if(indexOfNamespaceEnd == -1) {
+                    SocketIOParserException e = new SocketIOParserException("Namespace end symbol (" + NAMESPACE_END + ") is not found.");
+                    logException(e);
+                    throw e;
+                }
                 packet.namespace = encodedStr.substring(indexOfNamespaceStart, indexOfNamespaceEnd);
                 nextReadIndex = indexOfNamespaceEnd + 1;
             }
@@ -244,6 +264,10 @@ public class ParserImpl implements Parser {
 
         private boolean isPlaceholderObject(Object obj) {
             return obj instanceof JSONObject && ((JSONObject)obj).optBoolean(PLACEHOLDER);
+        }
+
+        private void logException(Exception e) {
+            logger.error("Error during the decoding process", e);
         }
     }
 

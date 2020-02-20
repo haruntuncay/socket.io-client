@@ -1,6 +1,8 @@
 package engineio_client.parser;
 
 import exceptions.EngineIOParserException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -39,6 +41,8 @@ import java.util.Arrays;
  * @see <a href="https://github.com/socketio/engine.io-protocol">EngineIO protocol</a> for detailed information.
  */
 public class Parser {
+
+    private final Logger logger = LoggerFactory.getLogger(Parser.class);
 
     //Engine.IO protocol version.
     public static final String VERSION = "3";
@@ -137,9 +141,14 @@ public class Parser {
 
     private int decodeByteArrayPayloadHelper(byte[] encodedData, DecodeCallback callback, int startIndex) {
         byte dataType = encodedData[startIndex];
-        if(dataType != BINARY_DATA_MARKER && dataType != STRING_DATA_MARKER)
-            throw new EngineIOParserException("Received encoded data starts with an invalid byte(" + dataType + ")."
-                                                + "\r\nAccepted ones are " + BINARY_DATA_MARKER + " or " + STRING_DATA_MARKER);
+        if(dataType != BINARY_DATA_MARKER && dataType != STRING_DATA_MARKER) {
+            String errorMessage = "Received encoded data starts with an invalid byte(" + dataType + ")."
+                    + "\r\nAccepted ones are " + BINARY_DATA_MARKER + " or " + STRING_DATA_MARKER;
+
+            logger.error(errorMessage);
+            throw new EngineIOParserException(errorMessage);
+        }
+
 
         // Since SEPARATOR(0xFF) byte separates between size and data area of a packet, read until it is seen.
         StringBuilder sizeStrBuilder = new StringBuilder();

@@ -4,6 +4,8 @@ import engineio_client.Config;
 import engineio_client.parser.Packet;
 import engineio_client.parser.Type;
 import okhttp3.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -20,6 +22,8 @@ import static common.Worker.submit;
  * Same principle applies to servers as well. They buffer any sent requested data and push it to clients as a whole when they poll.
  */
 public class PollingTransport extends Transport {
+
+    private final Logger logger = LoggerFactory.getLogger(PollingTransport.class);
 
     public static final String NAME = "polling";
     private static final MediaType BINARY_MEDIA_TYPE = MediaType.parse("application/octet-stream");
@@ -159,10 +163,13 @@ public class PollingTransport extends Transport {
                 // Connection failed due to a network problem. Retrying at a later time could establish a successful connection.
                 // Since closeAbruptly is followed by a retry (if user didn't choose otherwise), choose it in case of connection exception.
                 // Choose erroneous closing otherwise.
-                if(e instanceof ConnectException || e instanceof SocketTimeoutException)
-                    closeAbruptly("Connection exception during poll request.", e);
-                else
+                if(e instanceof ConnectException || e instanceof SocketTimeoutException) {
+                    logger.error("Abrupt close during {} request.", isPostRequest ? "post" : "poll", e);
+                    closeAbruptly("Connection exception during " + (isPostRequest ? "post" : "poll") + " request.", e);
+                } else {
+                    logger.error("Error during {} request.", isPostRequest ? "post" : "poll", e);
                     handleError("An error occurred.", e);
+                }
             }
 
             @Override
@@ -171,7 +178,8 @@ public class PollingTransport extends Transport {
                    // Request has terminated with an error or an unrecoverable condition,
                    //   or the Socket.IO server refused(status code 403) the client.
                    if(!response.isSuccessful()) {
-                       handleError((isPostRequest ? "Post" : "Get") + " request failed. Response: " + response);
+                       logger.error("Response error during {} request. Response: {}", isPostRequest ? "post" : "poll", response);
+                       handleError((isPostRequest ? "Post" : "Poll") + " request failed. Response: " + response);
                        return;
                    }
 
@@ -184,6 +192,7 @@ public class PollingTransport extends Transport {
                        submit(() -> parser.decodePayload(data, pollingTp::onPacket));
                    }
                } catch (IOException e) {
+                   logger.error("Error while reading response.", e);
                    closeAbruptly("Error while retrieving the response body.", e);
                } finally {
                    if(state != State.ABRUPTLY_CLOSED) {

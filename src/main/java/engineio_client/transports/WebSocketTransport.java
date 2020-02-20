@@ -5,12 +5,16 @@ import engineio_client.parser.Packet;
 import engineio_client.parser.Type;
 import okhttp3.*;
 import okio.ByteString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.SocketException;
 
 import static common.Worker.submit;
 
 public class WebSocketTransport extends Transport {
+
+    private final Logger logger = LoggerFactory.getLogger(WebSocketTransport.class);
 
     public static final String NAME = "websocket";
     /*
@@ -129,10 +133,14 @@ public class WebSocketTransport extends Transport {
 
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-            if(t instanceof SocketException)
+            if(t instanceof SocketException) {
+                logger.error("WebSocket connect failure, abruptly closed.", t);
                 WebSocketTransport.this.closeAbruptly("WebSocket connection failure", t);
-            else
+            }
+            else {
+                logger.error("WebSocket error. Response: {}", response, t);
                 handleError("An error occurred." + (response != null ? response : ""), t);
+            }
         }
 
         @Override

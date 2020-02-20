@@ -1,6 +1,6 @@
 package socketio_client.parser;
 
-import exceptions.SocketIOException;
+import exceptions.SocketIOParserException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -103,7 +103,7 @@ public class ParserTest {
         // This one still waits for 1 byte[], since it's not fully constructed, the callback will not be called.
         decoder.add("51-[\"eventName\",{\"_placeholder\":true,\"num\":0}]", packet -> fail("This will not be called"));
         // Adding a binary packet while another one already waits for re-construction causes SocketIOException to be thrown.
-        assertThrows(SocketIOException.class, () -> decoder.add("51-[\"eventName\",{\"_placeholder\":true,\"num\":0}]", packet -> {}));
+        assertThrows(SocketIOParserException.class, () -> decoder.add("51-[\"eventName\",{\"_placeholder\":true,\"num\":0}]", packet -> {}));
 
         // Add the required binary data so that packet re-construction can be complete.
         decoder.add(new byte[]{1,2,3}, packet -> {
