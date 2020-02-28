@@ -3,6 +3,7 @@ package socketio_client.parser;
 import exceptions.SocketIOParserException;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.junit.Test;
 
 import static common.Utils.jsonArrayToObjectArray;
@@ -95,6 +96,33 @@ public class ParserTest {
                     assertEquals(1, packet.id);
                     assertNull(packet.getData());
                 });
+    }
+
+    @Test
+    /*
+         Test of issue#1 https://github.com/haruntuncay/socket.io-client/issues/1.
+         Socket.IO packets separate different parts of a message with separators (like "/", "-", ",")
+         and when they appear in data part, caused a bug that elicited this issue.
+     */
+    public void testDecodeStringWhenSeparatorsAppearsInData() {
+        decoder.add("22-[\"event-name/\", \"va,lue\"]", packet -> {
+            JSONArray data = (JSONArray) packet.data;
+            assertEquals(2, packet.attachmentSize);
+            assertEquals("event-name/", data.get(0));
+            assertEquals("va,lue", data.get(1));
+            assertEquals("/", packet.namespace);
+        });
+
+        decoder.add("22-/nsp,[\"event,name\", \"va/lue\"]", packet -> {
+            JSONArray data = (JSONArray) packet.data;
+            assertEquals("event,name", data.get(0));
+            assertEquals("va/lue", data.get(1));
+            assertEquals("/nsp", packet.namespace);
+        });
+
+        decoder.add("2/nsp,", packet -> {
+            assertEquals("/nsp", packet.namespace);
+        });
     }
 
     @Test

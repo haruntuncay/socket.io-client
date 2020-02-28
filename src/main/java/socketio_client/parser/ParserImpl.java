@@ -177,6 +177,13 @@ public class ParserImpl implements Parser {
 
         private Packet decodeStringData(String encodedStr) {
             int typeValue = Character.digit(encodedStr.charAt(0), 10);
+            int dataStartIndex = encodedStr.indexOf("[");
+            // The metadata separators are only searched until this index.
+            // If data isn't present, this variable will be set to -1, which will cause all separator searched to fail.
+            // Therefore, if data isn't present, set it to Integer.MAX_VALUE so that separator searches can progress.
+            if(dataStartIndex == -1)
+                dataStartIndex = Integer.MAX_VALUE;
+
             if(!Type.isValid(typeValue)) {
                 SocketIOParserException e = new SocketIOParserException("Type (" + typeValue + ") is not a valid Socket.IO packet type.");
                 logException(e);
@@ -189,15 +196,15 @@ public class ParserImpl implements Parser {
 
             // If attachment separator "-" is found, then find the number of attachments
             int indexOfAttachmentSeparator = encodedStr.indexOf(ATTACHMENT_SEPARATOR, nextReadIndex);
-            if(indexOfAttachmentSeparator > -1) {
+            if(indexOfAttachmentSeparator > -1 && indexOfAttachmentSeparator < dataStartIndex) {
                 packet.attachmentSize = Integer.parseInt(encodedStr.substring(1, indexOfAttachmentSeparator));
                 nextReadIndex = indexOfAttachmentSeparator + 1;
             }
 
             int indexOfNamespaceStart = encodedStr.indexOf(NAMESPACE_START, nextReadIndex);
-            if(indexOfNamespaceStart > -1) {
+            if(indexOfNamespaceStart > -1 && indexOfNamespaceStart < dataStartIndex) {
                 int indexOfNamespaceEnd = encodedStr.indexOf(NAMESPACE_END, indexOfNamespaceStart);
-                if(indexOfNamespaceEnd == -1) {
+                if(indexOfNamespaceEnd == -1 || indexOfNamespaceEnd > dataStartIndex) {
                     SocketIOParserException e = new SocketIOParserException("Namespace end symbol (" + NAMESPACE_END + ") is not found.");
                     logException(e);
                     throw e;

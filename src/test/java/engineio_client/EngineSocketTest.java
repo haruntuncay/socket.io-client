@@ -110,10 +110,11 @@ public class EngineSocketTest extends ConnectingTest {
         configList.forEach(config -> {
             testHelper("testServerInitiatedClose", config, engineIOUrl,
                     (engine, latch) -> {
-                        engine.on(EngineSocket.OPEN, args -> engine.send("hello"));
-                        engine.on(EngineSocket.OPEN, args -> engine.send("world"));
-                        engine.on(EngineSocket.OPEN, args -> engine.send("close"));
-                        engine.on(EngineSocket.UPGRADE, args -> System.out.println("Upgraded"));
+                        engine.on(EngineSocket.OPEN, args -> {
+                            engine.send("hello");
+                            engine.send("world");
+                            engine.send("close");
+                        });
                         engine.on(EngineSocket.CLOSE, args -> latch.countDown());
                     });
         });
