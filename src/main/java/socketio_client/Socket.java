@@ -85,7 +85,6 @@ public class Socket extends Observable {
     }
 
     public void close() {
-        manager.sendPacket(new Packet(Type.DISCONNECT, namespace));
         disconnect();
     }
 
@@ -93,6 +92,7 @@ public class Socket extends Observable {
         if(state == State.CLOSED)
             return;
 
+        manager.sendPacket(new Packet(Type.DISCONNECT, namespace));
         manager.disconnectSocket(this);
         doCommonClosingCleanUp(DISCONNECT, args);
     }
