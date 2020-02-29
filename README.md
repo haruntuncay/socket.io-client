@@ -11,13 +11,13 @@ You can install this library using the following:
 <dependency>
     <groupId>com.github.haruntuncay</groupId>
     <artifactId>socket.io-client</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 </dependency>
 ```
 
 **Gradle**:
 ```
-compile group: "com.github.haruntuncay", name: "socket.io-client", version: "1.0"
+compile group: "com.github.haruntuncay", name: "socket.io-client", version: "1.1"
 ```
 
 ## Usage and API
